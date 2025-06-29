@@ -431,7 +431,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
   if (!localStorage.getItem('theme')) {
     document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light')
   }
-}
+})
 
 // Basic event listeners (placeholder for existing functionality)
 function setupBasicEventListeners() {
