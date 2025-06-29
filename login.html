@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign In - Notes App</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <a href="index.html" class="back-btn" id="backBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="header-title" id="headerTitle">SIGN IN</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="auth-container">
+            <div class="auth-form">
+                <div class="auth-header">
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to access your notes</p>
+                </div>
+
+                <form class="auth-form-content" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email" />
+                        <small class="form-error" id="emailError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required placeholder="Enter your password" />
+                        <small class="form-error" id="passwordError"></small>
+                    </div>
+
+                    <button type="submit" class="auth-btn primary" id="loginBtn">
+                        <span>SIGN IN</span>
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="signup.html">Create one here</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+    
+    <!-- Load Firebase config -->
+    <script src="firebase-config.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for Firebase to be ready
+        function waitForFirebase() {
+            return new Promise((resolve) => {
+                const checkFirebase = () => {
+                    if (window.auth && window.database && window.authFunctions) {
+                        resolve();
+                    } else {
+                        setTimeout(checkFirebase, 100);
+                    }
+                };
+                checkFirebase();
+            });
+        }
+
+        waitForFirebase().then(function() {
+            console.log("Firebase ready for login page");
+
+            // Show toast function
+            function showToast(message) {
+                const toast = document.getElementById("toast");
+                const toastMessage = document.getElementById("toastMessage");
+                toastMessage.textContent = message;
+                toast.classList.add("open");
+                setTimeout(() => {
+                    toast.classList.remove("open");
+                }, 3000);
+            }
+
+            function showError(fieldId, message) {
+                const errorElement = document.getElementById(fieldId + "Error");
+                if (errorElement) {
+                    errorElement.textContent = message;
+                }
+            }
+
+            function clearErrors() {
+                const errorElements = document.querySelectorAll('.form-error');
+                errorElements.forEach(el => el.textContent = '');
+            }
+
+            // Handle form submission
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                clearErrors();
+
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                if (!email || !password) {
+                    if (!email) showError('email', 'Email is required');
+                    if (!password) showError('password', 'Password is required');
+                    return;
+                }
+
+                const loginBtn = document.getElementById('loginBtn');
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+
+                try {
+                    await window.authFunctions.signInWithEmail(email, password);
+                    showToast("Signed in successfully!");
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 1000);
+                } catch (error) {
+                    console.error("Login error:", error);
+                    if (error.code === 'auth/user-not-found') {
+                        showError('email', 'No account found with this email');
+                    } else if (error.code === 'auth/wrong-password') {
+                        showError('password', 'Incorrect password');
+                    } else if (error.code === 'auth/invalid-email') {
+                        showError('email', 'Invalid email address');
+                    } else if (error.code === 'auth/user-disabled') {
+                        showError('email', 'This account has been disabled');
+                    } else {
+                        showToast("Failed to sign in. Please try again.");
+                    }
+                } finally {
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<span>SIGN IN</span>';
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

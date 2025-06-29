@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Notes App</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="hamburger-btn" id="hamburgerBtn" title="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1 class="header-title" id="headerTitle">NOTES</h1>
+            </div>
+            <div class="header-center">
+                <!-- Search moved below header -->
+            </div>
+            <div class="header-right">
+                <button class="back-btn hidden" id="backBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">Notes App</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-nav">
+            <a href="#" class="nav-item active" id="navNotes">
+                <i class="fas fa-sticky-note"></i>
+                All Notes
+            </a>
+            <a href="category.html" class="nav-item" id="navCategories">
+                <i class="fas fa-folder"></i>
+                Categories
+            </a>
+            <a href="#" class="nav-item" id="navShopping">
+                <i class="fas fa-shopping-cart"></i>
+                Shopping Lists
+            </a>
+            <a href="#" class="nav-item" id="navRecipes">
+                <i class="fas fa-utensils"></i>
+                Recipes
+            </a>
+            <a href="photo.html" class="nav-item" id="navPhotos">
+                <i class="fas fa-camera"></i>
+                Photo Gallery
+            </a>
+            <a href="share.html" class="nav-item" id="navShared">
+                <i class="fas fa-share-alt"></i>
+                Shared Notes
+            </a>
+            <div class="nav-divider"></div>
+            <a href="#" class="nav-item" id="navSettings">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+            <a href="login.html" class="nav-item" id="navSignIn">
+                <i class="fas fa-sign-in-alt"></i>
+                Sign In
+            </a>
+            <a href="#" class="nav-item hidden" id="navSignOut">
+                <i class="fas fa-sign-out-alt"></i>
+                Sign Out
+            </a>
+        </div>
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Notes Page -->
+        <div class="page active" id="notesPage">
+            <!-- Search Section -->
+            <div class="search-section" id="searchSection">
+                <div class="search-container" id="searchContainer">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search notes..." />
+                    <button class="search-btn" id="searchBtn" title="Advanced search">
+                        <i class="fas fa-sliders-h"></i>
+                    </button>
+                    <button class="search-clear hidden" id="searchClear" title="Clear search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filter Chips -->
+            <div class="filter-chips" id="filterChips">
+                <button class="filter-chip active" data-filter="all">All</button>
+                <button class="filter-chip" data-filter="shared">Shared</button>
+            </div>
+
+            <!-- Notes Container -->
+            <div class="notes-container" id="notesContainer">
+                <div class="empty-state">
+                    <i class="fas fa-sticky-note"></i>
+                    <h3>No notes yet</h3>
+                    <p>Tap the + button to create your first note</p>
+                </div>
+                
+
+            </div>
+        </div>
+
+        <!-- Shopping Lists Page -->
+        <div class="page" id="shoppingPage">
+            <div class="shopping-container">
+                <div class="shopping-categories">
+                    <button class="shopping-category-btn" id="groceryBtn" data-category="grocery">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>GROCERY</span>
+                    </button>
+                    <button class="shopping-category-btn" id="pharmacyBtn" data-category="pharmacy">
+                        <i class="fas fa-pills"></i>
+                        <span>PHARMACY</span>
+                    </button>
+                    <button class="shopping-category-btn" id="otherBtn" data-category="other">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span>OTHER</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shopping Category Page -->
+        <div class="page" id="shoppingCategoryPage">
+            <div class="shopping-list-container">
+                <div class="shopping-list-header">
+                    <h2 id="shoppingCategoryTitle">GROCERY</h2>
+                    <button class="btn-icon" id="addShoppingItemBtn">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="shopping-list-items" id="shoppingListItems">
+                    <!-- Shopping items will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipes Page -->
+        <div class="page" id="recipesPage">
+            <div class="recipes-container">
+                <div class="recipes-header">
+                    <h2>All Recipes</h2>
+                    <button class="btn-icon" id="addRecipeBtn">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="recipes-list" id="recipesList">
+                    <!-- Recipes will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipe Editor Page -->
+        <div class="page" id="recipeEditorPage">
+            <div class="recipe-editor-container">
+                <div class="recipe-editor-content">
+                    <input type="text" class="recipe-title-input" id="recipeTitleInput" placeholder="Recipe title..." />
+                    
+                    <div class="recipe-section">
+                        <h3>Description</h3>
+                        <textarea class="recipe-description" id="recipeDescriptionInput" placeholder="Brief description of the recipe..."></textarea>
+                    </div>
+
+                    <div class="recipe-section">
+                        <h3>Ingredients</h3>
+                        <div class="ingredients-list" id="ingredientsList">
+                            <!-- Ingredients will be rendered here -->
+                        </div>
+                        <button class="btn-secondary" id="addIngredientBtn">
+                            <i class="fas fa-plus"></i>
+                            Add Ingredient
+                        </button>
+                    </div>
+
+                    <div class="recipe-section">
+                        <h3>Method</h3>
+                        <div class="method-steps" id="methodSteps">
+                            <!-- Method steps will be rendered here -->
+                        </div>
+                        <button class="btn-secondary" id="addStepBtn">
+                            <i class="fas fa-plus"></i>
+                            Add Step
+                        </button>
+                    </div>
+
+                    <div class="recipe-section">
+                        <h3>Photos</h3>
+                        <div class="recipe-images" id="recipeImages">
+                            <!-- Recipe images will be rendered here -->
+                        </div>
+                        <input type="file" id="recipeImageUpload" accept="image/*" multiple style="display: none;">
+                        <button class="btn-secondary" id="addRecipeImageBtn">
+                            <i class="fas fa-camera"></i>
+                            Add Photos
+                        </button>
+                    </div>
+
+                    <div class="recipe-actions">
+                        <button class="btn-primary" id="saveRecipeBtn">
+                            <i class="fas fa-save"></i>
+                            Save Recipe
+                        </button>
+                        <button class="btn-secondary" id="cancelRecipeBtn">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipe Viewer Page -->
+        <div class="page" id="recipeViewerPage">
+            <div class="recipe-viewer-container">
+                <div class="recipe-viewer-content">
+                    <div class="recipe-viewer-header">
+                        <h1 class="recipe-viewer-title" id="recipeViewerTitle"></h1>
+                        <div class="recipe-viewer-actions">
+                            <button class="btn-icon" id="editRecipeBtn">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="recipe-viewer-description" id="recipeViewerDescription"></div>
+                    
+                    <div class="recipe-viewer-section">
+                        <h3>Ingredients</h3>
+                        <div class="recipe-viewer-ingredients" id="recipeViewerIngredients"></div>
+                    </div>
+
+                    <div class="recipe-viewer-section">
+                        <h3>Method</h3>
+                        <div class="recipe-viewer-method" id="recipeViewerMethod"></div>
+                    </div>
+
+                    <div class="recipe-viewer-section" id="recipeViewerImagesSection">
+                        <h3>Photos</h3>
+                        <div class="recipe-viewer-images" id="recipeViewerImages"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Note Editor Page -->
+        <div class="page" id="editorPage">
+            <!-- Collaborator Status -->
+            <div class="collaborator-status hidden" id="collaboratorStatus">
+                <div class="collaborator-list" id="collaboratorList"></div>
+            </div>
+
+            <!-- Editor Content -->
+            <div class="editor-content">
+                <input type="text" class="editor-title" id="titleInput" placeholder="Note title..." />
+                
+                <div class="editor-meta" id="dateInfo"></div>
+                
+                <!-- Categories -->
+                <div class="editor-section">
+                    <div class="section-header">
+                        <h3>Categories</h3>
+                        <button class="btn-icon" id="addCategoryBtn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="category-chips" id="categoryChips"></div>
+                </div>
+
+                <!-- Content -->
+                <textarea class="editor-body" id="contentTextarea" placeholder="Start writing your note..."></textarea>
+
+                <!-- List Section -->
+                <div class="editor-section hidden" id="listSection">
+                    <div class="section-header">
+                        <h3>List Items</h3>
+                        <button class="btn-icon" id="addListItemBtn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="list-items" id="listItems"></div>
+                </div>
+
+                <!-- Images Section -->
+                <div class="editor-section hidden" id="imagesSection">
+                    <div class="section-header">
+                        <h3>Images</h3>
+                        <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;" />
+                        <button class="btn-icon" onclick="document.getElementById('imageUpload').click()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="image-gallery" id="imageGrid"></div>
+                </div>
+
+                <!-- Voice Notes Section -->
+                <div class="editor-section hidden" id="voiceSection">
+                    <div class="section-header">
+                        <h3>Voice Notes</h3>
+                        <button class="btn-icon" onclick="showVoiceRecordingModal()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="voice-notes-container" id="voiceContainer"></div>
+                </div>
+            </div>
+
+            <!-- Collaboration Status -->
+            <div class="collaboration-status" id="collaborationStatus" style="display: none;">
+                <div class="collaboration-indicator">
+                    <i class="fas fa-users"></i>
+                    <span class="collaboration-text">Real-time collaboration active</span>
+                    <div class="active-collaborators" id="activeCollaborators"></div>
+                </div>
+            </div>
+
+            <!-- Editor Toolbar -->
+            <div class="editor-toolbar">
+                <button class="toolbar-btn" id="imageBtn" title="Add Image">
+                    <i class="fas fa-image"></i>
+                </button>
+                <button class="toolbar-btn" id="voiceNoteBtn" title="Voice Note">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button class="toolbar-btn" id="listBtn" title="Add List">
+                    <i class="fas fa-list"></i>
+                </button>
+                <button class="toolbar-btn" id="shareBtn" title="Share Note">
+                    <i class="fas fa-share"></i>
+                </button>
+                <button class="toolbar-btn" id="passwordBtn" title="Set Password">
+                    <i class="fas fa-lock" id="passwordIcon"></i>
+                </button>
+                <button class="toolbar-btn" id="deleteBtn" title="Delete Note">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div class="page" id="settingsPage">
+            <div class="settings-container">
+                <div class="settings-section">
+                    <h3>Appearance</h3>
+                    <div class="setting-item">
+                        <label for="themeSelect">Theme</label>
+                        <select id="themeSelect" class="form-select">
+                            <option value="system">System</option>
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="languageSelect">Language</label>
+                        <select id="languageSelect" class="form-select">
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Account</h3>
+                    <div class="setting-item" id="userSettings" style="display: none;">
+                        <div class="user-info">
+                            <div class="user-name" id="userNameDisplay"></div>
+                            <div class="user-email" id="userEmailDisplay"></div>
+                        </div>
+                        <button class="btn btn-outline" id="editNameBtn">Edit Name</button>
+                    </div>
+                    <div class="setting-item">
+                        <button class="btn btn-danger" id="signOutBtn" style="display: none;">Sign Out</button>
+                        <button class="btn btn-primary" id="signInBtn">Sign In</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Hidden File Input -->
+    <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;">
+
+    <!-- Floating Action Button -->
+    <button class="fab" id="addNoteBtn" title="Add Note">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Share Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Share Note</h2>
+                <button class="modal-close" id="shareModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Current Access Section -->
+                <div class="current-access-section">
+                    <h3>People with access</h3>
+                    <div class="current-collaborators" id="currentCollaborators">
+                        <!-- Current collaborators will be displayed here -->
+                    </div>
+                </div>
+                
+                <!-- Add People Section -->
+                <div class="add-people-section">
+                    <h3>Add people</h3>
+                    <div class="form-group">
+                        <input type="text" id="userSearchInput" class="form-input" placeholder="Search by username, name, or email..." />
+                    </div>
+                    <div class="search-results" id="searchResults"></div>
+                    <div class="selected-users" id="selectedUsers"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelShareBtn">Cancel</button>
+                <button class="btn btn-primary" id="sendInvitesBtn" disabled>Send Invitations</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Categories</h2>
+                <button class="modal-close" id="categoryModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-categories" id="modalCategories"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveCategoriesBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Username Modal -->
+    <div class="modal" id="usernameModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Set Username</h2>
+            </div>
+            <div class="modal-body">
+                <p>Please choose a username to enable sharing features.</p>
+                <div class="form-group">
+                    <input type="text" id="usernameInput" class="form-input" placeholder="Enter username..." />
+                    <small>4-20 characters, letters, numbers, and underscores only</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveUsernameBtn">Save Username</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Name Modal -->
+    <div class="modal" id="nameModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Update Name</h2>
+                <button class="modal-close" id="nameModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="nameInput" class="form-input" placeholder="Enter your name..." />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelNameBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveNameBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Note Password</h2>
+                <button class="modal-close" id="passwordModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="password" id="notePasswordInput" class="form-input" placeholder="Enter password..." />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="removePasswordBtn">Remove Password</button>
+                <button class="btn btn-primary" id="savePasswordBtn">Save Password</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- List Type Modal -->
+    <div class="modal" id="listTypeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Choose List Type</h2>
+                <button class="modal-close" id="listTypeModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <button class="list-type-btn" data-type="bulleted">
+                    <i class="fas fa-list-ul"></i>
+                    Bulleted List
+                </button>
+                <button class="list-type-btn" data-type="numbered">
+                    <i class="fas fa-list-ol"></i>
+                    Numbered List
+                </button>
+                <button class="list-type-btn" data-type="checklist">
+                    <i class="fas fa-check-square"></i>
+                    Checklist
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Delete Note</h2>
+                <button class="modal-close" id="deleteModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this note? This action cannot be undone.</p>
+                <div class="form-group hidden" id="deletePasswordContainer">
+                    <input type="password" id="deletePasswordInput" class="form-input" placeholder="Enter note password..." />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelDeleteBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Viewer Modal -->
+    <div class="image-viewer-modal" id="imageViewerModal">
+        <div class="image-viewer-overlay" id="imageViewerOverlay"></div>
+        <div class="image-viewer-content">
+            <button class="image-viewer-close" id="imageViewerClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <img class="image-viewer-img" id="imageViewerImg" src="" alt="Fullscreen Image">
+            <div class="image-viewer-controls">
+                <button class="image-viewer-btn" id="downloadImageBtn">
+                    <i class="fas fa-download"></i>
+                    Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Search Modal -->
+    <div class="modal" id="advancedSearchModal">
+        <div class="modal-overlay" onclick="hideAdvancedSearchModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Advanced Search</h3>
+                <button class="modal-close" onclick="hideAdvancedSearchModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Search in content</label>
+                    <input type="text" id="advancedSearchContent" class="form-input" placeholder="Search within note content...">
+                </div>
+                <div class="form-group">
+                    <label>Date range</label>
+                    <div class="date-range">
+                        <input type="date" id="advancedSearchFromDate" class="form-input">
+                        <span>to</span>
+                        <input type="date" id="advancedSearchToDate" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="advancedSearchCategory" class="form-input">
+                        <option value="">All categories</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Note type</label>
+                    <select id="advancedSearchType" class="form-input">
+                        <option value="">All types</option>
+                        <option value="text">Text only</option>
+                        <option value="images">With images</option>
+                        <option value="lists">With lists</option>
+                        <option value="voice">With voice notes</option>
+                        <option value="shared">Shared notes</option>
+                        <option value="password">Password protected</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sort by</label>
+                    <select id="advancedSearchSort" class="form-input">
+                        <option value="date">Date modified</option>
+                        <option value="title">Title</option>
+                        <option value="created">Date created</option>
+                        <option value="relevance">Relevance</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="clearAdvancedSearch()">Clear</button>
+                <button class="btn btn-primary" onclick="performAdvancedSearch()">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Recording Modal -->
+    <div class="modal" id="voiceRecordingModal">
+        <div class="modal-overlay" onclick="stopVoiceRecording()"></div>
+        <div class="modal-content voice-modal">
+            <div class="modal-header">
+                <h3>Speech to Text</h3>
+                <button class="modal-close" onclick="stopVoiceRecording()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body voice-body">
+                <div class="voice-visualizer" id="voiceVisualizer">
+                    <div class="voice-circle">
+                        <i class="fas fa-microphone" id="voiceMicIcon"></i>
+                    </div>
+                </div>
+                <div class="voice-status" id="voiceStatus">Tap to start speech recognition</div>
+                <div class="voice-duration" id="voiceDuration">00:00</div>
+                <div class="voice-controls">
+                    <button class="btn-voice" id="voiceRecordBtn" onclick="toggleVoiceRecording()">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="btn-voice hidden" id="voiceStopBtn" onclick="stopVoiceRecording()">
+                        <i class="fas fa-stop"></i>
+                    </button>
+                    <button class="btn-voice hidden" id="voicePlayBtn" onclick="playVoiceRecording()">
+                        <i class="fas fa-play"></i>
+                    </button>
+                </div>
+                <div class="voice-actions hidden" id="voiceActions">
+                    <button class="btn btn-secondary" onclick="discardVoiceRecording()">Discard</button>
+                    <button class="btn btn-primary" onclick="saveVoiceRecording()">Add to Note</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Search Modal -->
+    <div class="modal" id="voiceSearchModal">
+        <div class="modal-overlay" onclick="stopVoiceSearch()"></div>
+        <div class="modal-content voice-modal">
+            <div class="modal-header">
+                <h3>Voice Search</h3>
+                <button class="modal-close" onclick="stopVoiceSearch()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body voice-body">
+                <div class="voice-visualizer" id="voiceSearchVisualizer">
+                    <div class="voice-circle">
+                        <i class="fas fa-microphone" id="voiceSearchMicIcon"></i>
+                    </div>
+                </div>
+                <div class="voice-status" id="voiceSearchStatus">Listening...</div>
+                <div class="voice-transcript" id="voiceSearchTranscript"></div>
+                <div class="voice-controls">
+                    <button class="btn-voice" id="voiceSearchStopBtn" onclick="stopVoiceSearch()">
+                        <i class="fas fa-stop"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="category-manager.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

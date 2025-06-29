@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Photo Gallery - Notes App</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="hamburger-btn" id="hamburgerBtn" title="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1 class="header-title" id="headerTitle">GALLERY</h1>
+            </div>
+            <div class="header-center">
+                <!-- Empty center space -->
+            </div>
+            <div class="header-right">
+                <button class="back-btn" id="backBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">Notes App</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-sticky-note"></i>
+                All Notes
+            </a>
+            <a href="category.html" class="nav-item">
+                <i class="fas fa-folder"></i>
+                Categories
+            </a>
+            <a href="#" class="nav-item" id="navShopping">
+                <i class="fas fa-shopping-cart"></i>
+                Shopping Lists
+            </a>
+            <a href="#" class="nav-item" id="navRecipes">
+                <i class="fas fa-utensils"></i>
+                Recipes
+            </a>
+            <a href="#" class="nav-item active" id="navPhotos">
+                <i class="fas fa-camera"></i>
+                Photo Gallery
+            </a>
+            <a href="share.html" class="nav-item">
+                <i class="fas fa-share-alt"></i>
+                Shared Notes
+            </a>
+            <div class="nav-divider"></div>
+            <a href="#" class="nav-item" id="navSettings">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+            <a href="login.html" class="nav-item" id="navSignIn">
+                <i class="fas fa-sign-in-alt"></i>
+                Sign In
+            </a>
+            <a href="#" class="nav-item hidden" id="navSignOut">
+                <i class="fas fa-sign-out-alt"></i>
+                Sign Out
+            </a>
+        </div>
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Photo Gallery Main Page -->
+        <div class="page active" id="photoGalleryPage">
+            <div class="photo-gallery-container">
+                <!-- Gallery Header -->
+                <div class="photo-gallery-header">
+                    <h2>Photo Groups</h2>
+                    <button class="add-group-btn" id="addGroupBtn">
+                        <i class="fas fa-plus"></i>
+                        Create Group
+                    </button>
+                </div>
+
+                <!-- Photo Groups Grid -->
+                <div class="photo-groups-grid" id="photoGroupsGrid">
+                    <!-- Groups will be rendered here -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state hidden" id="photoEmptyState">
+                    <!-- Empty space when no groups exist -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Group View Page -->
+        <div class="page" id="groupViewPage">
+            <div class="group-view-container">
+                <div class="group-view-header">
+                    <h2 id="groupViewTitle">Group Name</h2>
+                    <div class="group-actions">
+                        <button class="download-zip-btn" id="downloadZipBtn">
+                            <i class="fas fa-download"></i>
+                            Download ZIP
+                        </button>
+                        <button class="add-photos-btn" id="addPhotosToGroupBtn">
+                            <i class="fas fa-plus"></i>
+                            Add Photos
+                        </button>
+                        <button class="btn-icon" id="deleteGroupBtn" title="Delete Group">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="group-photos-grid" id="groupPhotosGrid">
+                    <!-- Group photos will be rendered here -->
+                </div>
+                <div class="empty-group" id="emptyGroupState">
+                    <i class="fas fa-camera"></i>
+                    <h3>No photos in this group</h3>
+                    <p>Add photos to start building this collection</p>
+                    <button class="btn-primary" id="addFirstPhotoToGroup">
+                        <i class="fas fa-plus"></i>
+                        Add Photos
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Photo Upload Modal -->
+    <div class="modal" id="photoUploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Photos</h3>
+                <button class="modal-close" id="closePhotoUploadModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="photoUploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Click to select photos or drag and drop</p>
+                    <input type="file" id="photoFileInput" multiple accept="image/*" hidden />
+                </div>
+                <div class="photo-preview" id="photoPreview">
+                    <!-- Preview of selected photos will be shown here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelPhotoUpload">Cancel</button>
+                <button class="btn-primary" id="confirmPhotoUpload">Add Photos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group Creation Modal -->
+    <div class="modal" id="groupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Group</h3>
+                <button class="modal-close" id="closeGroupModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="groupName">Group Name:</label>
+                    <input type="text" id="groupName" class="form-input" placeholder="Enter group name..." />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelGroup">Cancel</button>
+                <button class="btn-primary" id="saveGroup">Create Group</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Viewer Modal -->
+    <div class="photo-viewer-modal" id="photoViewerModal">
+        <div class="photo-viewer-container" id="photoViewerContainer">
+            <img id="photoViewerImg" src="" alt="Photo" />
+            <div class="photo-viewer-controls" id="photoViewerControls">
+                <button class="viewer-btn download-btn" id="downloadPhotoBtn">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="viewer-btn delete-btn" id="deletePhotoBtn">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="viewer-btn close-btn" id="closePhotoViewer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for photos -->
+    <input type="file" id="hiddenPhotoInput" multiple accept="image/*" style="display: none;" />
+
+    <script src="firebase-config.js"></script>
+    <script src="photo.js"></script>
+</body>
+</html>

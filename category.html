@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Categories - Notes App</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="hamburger-btn" id="hamburgerBtn" title="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1 class="header-title" id="headerTitle">CATEGORIES</h1>
+            </div>
+            <div class="header-right">
+                <a href="index.html" class="back-btn" id="backBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">Notes App</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-sticky-note"></i>
+                All Notes
+            </a>
+            <a href="#" class="nav-item active">
+                <i class="fas fa-folder"></i>
+                Categories
+            </a>
+            <a href="index.html#shopping" class="nav-item" id="navShopping">
+                <i class="fas fa-shopping-cart"></i>
+                Shopping Lists
+            </a>
+            <a href="index.html#recipes" class="nav-item" id="navRecipes">
+                <i class="fas fa-utensils"></i>
+                Recipes
+            </a>
+            <a href="photo.html" class="nav-item">
+                <i class="fas fa-camera"></i>
+                Photo Gallery
+            </a>
+            <a href="share.html" class="nav-item">
+                <i class="fas fa-share-alt"></i>
+                Shared Notes
+            </a>
+            <div class="nav-divider"></div>
+            <a href="#" class="nav-item" id="navSettings">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+            <a href="login.html" class="nav-item" id="navSignIn">
+                <i class="fas fa-sign-in-alt"></i>
+                Sign In
+            </a>
+        </div>
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="categories-container">
+            <div class="add-category-form">
+                <input type="text" class="category-input" id="categoryInput" placeholder="New category..." />
+                <button class="add-category-btn" id="addCategoryFormBtn">ADD</button>
+            </div>
+            <div class="categories-list" id="categoriesList">
+                <div class="empty-state">
+                    <i class="fas fa-folder"></i>
+                    <p>You don't have any categories yet</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Firebase Configuration -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="firebase-exports.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="category-manager.js"></script>
+    
+    <script src="category.js?v=2"></script>
+</body>
+</html>
