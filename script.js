@@ -8,8 +8,6 @@ let isEditing = false
 let currentPage = "notes"
 let searchQuery = ""
 let selectedCategories = []
-let currentUser = null
-let isGuest = false
 let dataLoaded = false
 
 // Initialize the app
@@ -433,7 +431,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
   if (!localStorage.getItem('theme')) {
     document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light')
   }
-})
+}
 
 // Basic event listeners (placeholder for existing functionality)
 function setupBasicEventListeners() {
